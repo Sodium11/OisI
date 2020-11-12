@@ -2,11 +2,13 @@ from microbit import *
 display.show("S")
 mode = ""
 instructions=['+','-','*','/']
-variables=['a','b','c','d']
 value_map={}
-for v in variables:
-    value_map[v]=0
+value_map['A']=0
+value_map['B']=0
+value_map['C']=0
+value_map['D']=0
 figures=['0','1','2','3','4','5','6','7','8','9']
+label_p=[0 for i in range(100)]
 
 def output_chr(char):
     display.show(char)
@@ -48,6 +50,7 @@ def program_input():
     while True:
         first=chr_input(variables+['L','O','R'])
         if first=='R':
+            result=result.rstrip(';')
             return result
         result+=first
         if first=='L':
@@ -73,19 +76,18 @@ def program_input():
             fifth=str(num_input())
         result+=fifth+';'
 
-def label_dict(opes):
-    p=0
-    result={}
-    for ope in opes:
+def label_register(program):
+    global label_p
+    opes=program.split(';'):
+    for p in range(len(opes)):
+        ope=opes[p]
         if ope[0]==':':
-            label=ope[1]
-            result[label]=p
-        p+=1
-    return result
+            p_num=int(ope[1:])
+            label_p[p_num]=p
 
 def run_program(program_str):
     output_str(program_str)
-    opes=program_str.rstrip(';').split(';')
+    opes=program_str.split(';')
     l_dict=label_dict(opes)
     p=-1
     while p<len(opes):
